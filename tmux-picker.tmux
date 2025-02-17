@@ -108,7 +108,7 @@ set_tmux_env PICKER_BLACKLIST_PATTERNS "$(array_join "|" "${BLACKLIST[@]}")"
 
 set_tmux_env PICKER_COPY_COMMAND "tmux load-buffer -w - && tmux paste-buffer"
 set_tmux_env PICKER_ALT_COPY_COMMAND "tmux load-buffer -w - && tmux delete-buffer -b register || true"
-set_tmux_env PICKER_COPY_COMMAND_UPPERCASE "bash -c 'arg=\$(cat -); tmux split-window -h -c \"#{pane_current_path}\" ${EDITOR} \"\$arg\"'"
+set_tmux_env PICKER_COPY_COMMAND_UPPERCASE "bash -c 'arg=\$(cat -); arg="\${arg/#\~\\//\$HOME/}" ; arg="\${arg/#\~//home/}" ; tmux split-window -h -c \"#{pane_current_path}\" ${EDITOR} \"\$arg\"'"
 
 #set_tmux_env PICKER_HINT_FORMAT "$(process_format "#[fg=color0,bg=color202,dim,bold]%s")"
 #set_tmux_env PICKER_HINT_FORMAT "$(process_format "#[fg=black,bg=red,bold]%s")"
