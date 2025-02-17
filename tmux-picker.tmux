@@ -8,6 +8,14 @@
 CURRENT_DIR="$(readlink -e "${BASH_SOURCE[0]%/*}")"
 TMUX_PRINTER="$CURRENT_DIR/tmux-printer/tmux-printer"
 
+# $1: option
+# $2: default value
+tmux_get() {
+    local value
+    value="$(tmux show -gqv "$1")"
+    [ -n "$value" ] && echo "$value" || echo "$2"
+}
+
 function set_tmux_env() {
     local option_name="$1"
     local final_value="$2"
@@ -82,9 +90,11 @@ BLACKLIST=(
     "(deleted|modified|renamed|copied|master|mkdir|[Cc]hanges|update|updated|committed|commit|working|discard|directory|staged|add/rm|checkout)"
 )
 
-# "-n M-f" for Alt-F without prefix
-# "f" for prefix-F
-declare -a PICKER_KEY=("-n M-f" "-T copy-mode M-f")
+# "-n M-c" for Alt-c without prefix
+# "c" for prefix-c
+picker_key_bind="$(tmux_get '@picker_key_bind' '-n M-c')"
+picker_key_bind2="$(tmux_get '@picker_key_bind2' '-T copy-mode M-c')"
+declare -a PICKER_KEY=("${picker_key_bind}" "${picker_key_bind2}")
 
 #
 # Setup
@@ -98,7 +108,7 @@ set_tmux_env PICKER_BLACKLIST_PATTERNS "$(array_join "|" "${BLACKLIST[@]}")"
 
 set_tmux_env PICKER_COPY_COMMAND "tmux load-buffer -w - && tmux paste-buffer"
 set_tmux_env PICKER_ALT_COPY_COMMAND "tmux load-buffer -w - && tmux delete-buffer -b register || true"
-set_tmux_env PICKER_COPY_COMMAND_UPPERCASE "bash -c 'arg=\$(cat -); tmux split-window -h -c \"#{pane_current_path}\" vim \"\$arg\"'"
+set_tmux_env PICKER_COPY_COMMAND_UPPERCASE "bash -c 'arg=\$(cat -); tmux split-window -h -c \"#{pane_current_path}\" ${EDITOR} \"\$arg\"'"
 
 #set_tmux_env PICKER_HINT_FORMAT "$(process_format "#[fg=color0,bg=color202,dim,bold]%s")"
 #set_tmux_env PICKER_HINT_FORMAT "$(process_format "#[fg=black,bg=red,bold]%s")"

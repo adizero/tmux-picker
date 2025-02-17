@@ -33,8 +33,13 @@ You can press:
 
 # Configuration
 
+```
+# "-n M-c" for Alt-c without prefix
+# "c" for prefix-c
+set -g @picker-key '-n M-c'
+```
+
 - Edit `~/.tmux/tmux-picker/tmux-picker.tmux`, where you can change:
-    - `PICKER_KEY` (default <kbd>Meta</kbd> + <kbd>F</kbd>, without the prefix)
     - `PATTERNS_LIST1` - regex patterns highlighted after pressing `PICKER_KEY`
     - `PATTERNS_LIST2` - regex patterns highlighted after pressing <kbd>SPACE</kbd> in hint mode 
     - `BLACKLIST` - regex pattern describing items that will not be highlighted
