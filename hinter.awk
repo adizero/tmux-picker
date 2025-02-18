@@ -4,7 +4,12 @@ BEGIN {
 	n_matches = 0;
 
 	highlight_patterns = ENVIRON["PICKER_PATTERNS"]
-	num_hints_needed = ENVIRON["NUM_HINTS_NEEDED"]
+	count_only = ENVIRON["COUNT_ONLY"]
+    if (count_only) {
+        num_hints_needed = 1000
+    } else {
+        num_hints_needed = ENVIRON["NUM_HINTS_NEEDED"]
+    }
 	blacklist = "(^\x1b\\[[0-9;]{1,9}m|^|[[:space:]:<>)(&#'\"])"ENVIRON["PICKER_BLACKLIST_PATTERNS"]"$"
 
 	hint_format = ENVIRON["PICKER_HINT_FORMAT"]
@@ -151,9 +156,15 @@ function unmap(m) {
 		map_code(post_match);
 	}
 
-	printf "\n%s", (output_line skipped_prefix post_match)
+    if (!count_only) {
+        printf "\n%s", (output_line skipped_prefix post_match)
+    }
 }
 
 END {
-	print hint_lookup | "cat 1>&3"
+    if (count_only) {
+        print n_matches
+    } else {
+        print hint_lookup | "cat 1>&3"
+    }
 }

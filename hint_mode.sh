@@ -27,8 +27,14 @@ function extract_hints() {
 	local prefix="$1"
     clear
     export NUM_HINTS_NEEDED=
-    NUM_HINTS_NEEDED="$(get_pane_contents | gawk -f "$CURRENT_DIR/counter.awk")"
-    get_pane_contents | gawk -f "$CURRENT_DIR/gen_hints.awk" -f "$CURRENT_DIR/hinter.awk" prefix="${prefix}" 3> "$match_lookup_table"
+
+    # NUM_HINTS_NEEDED="$(get_pane_contents | gawk -f "$CURRENT_DIR/counter.awk")"
+    # get_pane_contents | gawk -f "$CURRENT_DIR/gen_hints.awk" -f "$CURRENT_DIR/hinter.awk" prefix="${prefix}" 3> "$match_lookup_table"
+
+    export COUNT_ONLY=1
+    NUM_HINTS_NEEDED="$(gawk -f "$CURRENT_DIR/gen_hints.awk" -f "$CURRENT_DIR/hinter.awk" "${pane_input_temp}")"
+    COUNT_ONLY=0
+    gawk -f "$CURRENT_DIR/gen_hints.awk" -f "$CURRENT_DIR/hinter.awk" prefix="${prefix}" "${pane_input_temp}" 3> "$match_lookup_table"
 }
 
 function show_hints_again() {

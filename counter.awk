@@ -1,5 +1,7 @@
-# counts items to highlight so we can choose the best hint set
+# Warning: Does not match hinter advanced logic, therefore it is not good enough,
+# count using the hinter awk code with count_only flag instead
 
+# counts items to highlight so we can choose the best hint set
 BEGIN {
     n_matches = 0;
 
