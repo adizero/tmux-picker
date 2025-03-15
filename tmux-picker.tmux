@@ -106,8 +106,23 @@ set_tmux_env PICKER_PATTERNS1 "$(array_join "|" "${PATTERNS_LIST1[@]}")"
 set_tmux_env PICKER_PATTERNS2 "$(array_join "|" "${PATTERNS_LIST2[@]}")"
 set_tmux_env PICKER_BLACKLIST_PATTERNS "$(array_join "|" "${BLACKLIST[@]}")"
 
-set_tmux_env PICKER_COPY_COMMAND "tmux load-buffer -w - && tmux paste-buffer"
-set_tmux_env PICKER_ALT_COPY_COMMAND "tmux load-buffer -w - && tmux delete-buffer -b register || true"
+# from old plugin
+# set_tmux_env PICKER_COPY_COMMAND " xargs tmux send-keys -t \$current_pane_id"
+
+# default? (requires xclip, not tested)
+# set_tmux_env PICKER_COPY_COMMAND "xclip -f -in -sel primary | xclip -in -sel clipboard"
+
+# set_tmux_env PICKER_COPY_COMMAND "xargs tmux send-keys"
+# set_tmux_env PICKER_COPY_COMMAND "tmux load-buffer - && tmux paste-buffer"
+# will this help with OSC52 being supported only in some terminal emulators?
+# set_tmux_env PICKER_COPY_COMMAND "tmux load-buffer -w -t $(readlink /proc/self/fd/0) - && tmux paste-buffer"
+
+# set_tmux_env PICKER_COPY_COMMAND "tee /tmp/t.txt | xargs tmux send-keys ; tmux load-buffer -w -t $(readlink /proc/self/fd/0) /tmp/t.txt ; rm -f /tmp/t.txt"
+set_tmux_env PICKER_COPY_COMMAND "tmux load-buffer -w -t $(readlink /proc/self/fd/0) - && tmux paste-buffer"
+
+# set_tmux_env PICKER_ALT_COPY_COMMAND "tmux load-buffer -w - && tmux delete-buffer -b register || true"
+set_tmux_env PICKER_ALT_COPY_COMMAND "tmux load-buffer -w -t $(readlink /proc/self/fd/0) - && tmux paste-buffer"
+
 set_tmux_env PICKER_COPY_COMMAND_UPPERCASE "bash -c 'arg=\$(cat -); arg="\${arg/#\~\\//\$HOME/}" ; arg="\${arg/#\~//home/}" ; tmux split-window -h -c \"#{pane_current_path}\" ${EDITOR} \"\$arg\"'"
 
 #set_tmux_env PICKER_HINT_FORMAT "$(process_format "#[fg=color0,bg=color202,dim,bold]%s")"
